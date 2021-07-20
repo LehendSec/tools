@@ -1,0 +1,137 @@
+sql注入
+1、原理：对用户的输入的参数未做过滤导致打破原先sql语句逻辑，攻击者利用此执行任意sql语句
+2、
+3、绕过：注释绕过(# --  ; /* */) 、大小写绕过、内联注释绕过(/*!*/)、双写绕过
+	、编码绕过(16进制、ascii（char函数）)、空格过滤绕过(使用/**/、()、%0a回车、tab、多个空格)
+	、过滤or and xor not绕过(使用&& %26、%26 || | !替代)、过滤等号绕过(使用like、rlike、regexp、大小写达到等号效果
+	、!<>替代)、过滤大小写绕过(greatest(n,m)返回参数中的最大值、least返回最小值、strcmp、in between关键字)
+	、过滤引号绕过(16进制、宽字节%aa%27)、过滤逗号绕过("string" from 1 for 6、join offset关键字)
+4、防御：转义、预编译、限制关键字输入以及长度等
+5、相关函数：报错函数--floor、exp、updatexml、extractvalue  延时函数--sleep、benchmark  
+	常用函数--mid(columnName,start,len)、limit、concat拼接字符串、group_concat、count、substr、left、ord
+6、数据库判断：特征表(information_schema)、连接符、返回的错误类型(you have an error in your SQL syntax)
+	
+xss
+1、原理：对用户的输入未做过滤便直接输出到页面，导致攻击者可以执行任意html/js代码
+2、利用：
+3、绕过：大小写混合绕过、闭合标签、16进制编码绕过、<IMG SRC="javascript:alert('XSS');">
+	、<a onmouseover="alert(document.cookie)">、onmouseover、onclick
+4、防御：过滤、html实体编码、httponly
+
+xxe
+1、原理：引用外部实体时，攻击者可以操控dtd文件路径，导致可以读取文件、getshell等
+2、利用：<!ENTITY % goodies SYSTEM "file:///C:/phpStudy/WWW/zhan/XXE-K/test.txt">  
+3、防御：禁用外部实体
+
+csrf
+1、原理：攻击者通过一些技术手段欺骗用户的浏览器去访问一个自己以前认证过的站点并运行一些操作
+2、利用：构造网站钓鱼
+3、防御：验证码、referer、token、自定义http报文头
+
+clrf
+1、原理：未过滤\r\n，导致可以注入指定cookie和html/js代码
+2、防御：过滤\r\n
+
+文件上传
+1、原理：未对文件做校验或者解析漏洞导致上传了可执行文件
+2、利用：上传文件
+3、绕过：抓包改后缀(前端js校验)、黑名单绕过(php3 phtml等)、content-type修改绕过、添加文件魔数(GIF89a)
+	、截断(00截断)、win系统截断(::$DATA)、apache从右到左解析(1.php.abc)、.htaccess、IIS解析漏洞(1.php;.jpg)
+	、时间竞争、二次渲染(代码附在尾部)
+4、防御：设置目录不可执行、判断过滤文件、重命名文件名和路径、单独设置文件服务器域名、白名单加黑名单
+
+文件下载
+1、原理：未对下载的文件做出限制，导致可以下载任意文件
+
+目录遍历
+1、原理：文件名可以更改并且未做过滤../等符号，导致可以遍历文件路径
+
+php常见漏洞
+rce、session、文件上传、变量覆盖、sql注入、弱类型等   dz（rce、xss等）  wordpress(rce)
+
+sping框架常见漏洞
+cve-2018-1273(rce、Spring Data的一个表达式存在注入)、CVE-2017-8046(Spring Data Rest安全验证模块存在rce)
+
+s2框架漏洞
+rce
+
+waf绕过
+1、主机防护软件：伪造搜索引擎(早期安全dog)、伪造白名单目录(admin等 360scan)、编码绕过(url编码)
+	、修改请求方式绕过(+参数污染)
+	、复数参数绕过(id=1&id=union&id=select&id=user,password&id=from%20mysql.user)
+	、触发规则绕过(特殊字符代替空格、字符串拼接、mysql内联注释、大小写混合、编码)
+2、云waf：直接攻击源站
+3、硬件waf
+
+渗透测试步骤
+1、信息收集：ip、whois信息、子域名等、敏感文件(github 谷歌)、web指纹(whatweb 云悉)
+	、操作系统(TTL nmap -O)、网站容器、脚本类型、数据库类型、端口及其服务(6379——>redis未授权访问漏洞)
+	、敏感文件、目录(rebots.txt)、旁站、c段、漏洞、相关功能点
+2、漏洞探测：awvs、nessus等+手工
+3、漏洞验证
+4、获取所需
+
+提权
+1、windows系统提权：系统漏洞提权(例如利用ms08067) 扫描补丁安装情况获取信息(例如MS09-012 巴西烤肉)
+2、linux系统提权：系统漏洞提权(例如2.6.18.c+nc反弹shell)
+3、数据库提权：udf提权(用户自定义函数)、mof提权(托管对象格式)、sqlserver--爆破、寻找sa密码
+4、系统配置不当提权：替换system进程等
+5、自启动提权：windows自启动为system，将脚本写入自启动
+
+内网穿透
+1、windows：nc、lcx
+2、linux：netcat、nc、ssh(端口映射)
+3、协议：http隧道、https隧道、icmp隧道
+
+windows密码抓取
+1、mimikte、proc、彩虹表
+
+内网横向渗透
+1、信息收集：是否存在内网--ipconfig(ifconfig)、内网存在主机(ping或者icmp等协议探测)
+	、端口、web服务、漏洞等
+2、其余步骤上同
+
+权限维持
+1、persistence 后渗透攻击模块，添加自启动
+2、将msf的攻击模块添加到目标机的服务
+3、获取管理员密码、监听键盘记录
+4、windows建立隐藏用户、添加不死马
+
+linux命令
+1、查看已登录用户：whoami
+2、查看所有用户：cat /etc/passwd
+3、查看用户密码：cat /etc/shadow
+3、添加用户：adduser username(-g 添加到指定用户组)
+4、修改用户密码：passwd username
+5、查看ip：ifconfig
+6、查看进程：ps aux
+7、杀死进程：kill -9 pid(-9 强制结束进程)
+8、查看端口：netstat -anp (配合 | grep 端口号可查看指定端口信息)
+9、查看内存：cat /proc/meminfo、free
+10、添加计划任务：crontab -u
+
+windows命令
+1、net user
+2、net user name pw /add
+3、ipconfig
+4、netstat -ano(| findstr 80)
+5、taskkill /f pid
+6、systeminfo memorychip
+
+路由协议：RIP(路由信息协议)、OSPF(链路状态协议)、BGP(外部网关协议)
+
+七层协议：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层
+
+五层协议：物理层、数据链路层、网络层、传输层、应用层
+
+四层协议：网络接口层、网络层、传输层、应用层
+
+python第三方库：requests、bs4、frida、binascii
+
+同源策略：同源策略是浏览器的一个安全功能，不同源的客户端脚本在没有明确授权的情况下，不能读写对方资源
+
+跨域：降域(document.domain)、script标签的src属性跨域、CORS(Access-Control-Allow-Origin)
+
+
+
+

